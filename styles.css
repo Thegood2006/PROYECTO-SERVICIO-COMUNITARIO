@@ -88,60 +88,173 @@ header.nav{
   align-items: flex-end;
   background: var(--ink);
   overflow: hidden;
-
 }
+
+/* Imagen de fondo */
 .hero-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
-  transform: scale(1.08);
-  filter: brightness(0.55) saturate(1.05);
+  object-position: center 50%;
+  filter: brightness(0.62) saturate(1.05);
   z-index: 0;
 }
 
-.hero-scrim{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg, rgba(12,12,13,0.35) 0%, rgba(12,12,13,0.15) 35%, rgba(12,12,13,0.92) 92%),
-             linear-gradient(90deg, rgba(12,12,13,0.55) 0%, transparent 45%);
+/* Capa oscura encima de la imagen */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(12, 12, 13, 0.82) 0%,
+      rgba(12, 12, 13, 0.55) 48%,
+      rgba(12, 12, 13, 0.15) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(12, 12, 13, 0.12) 0%,
+      rgba(12, 12, 13, 0.25) 55%,
+      rgba(12, 12, 13, 0.92) 100%
+    );
 }
+
+/* Contenido: título, texto y botones */
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: 100px 24px 72px;
+  width: 100%;
   max-width: 1120px;
   margin: 0 auto;
-  width: 100%;
+  padding: 150px 24px 80px;
+  text-align: left;
 }
-.hero-eyebrow{
-  color:var(--gold);font-weight:700;letter-spacing:0.25em;text-transform:uppercase;
-  font-size:0.78rem;margin-bottom:18px;display:flex;align-items:center;gap:10px;
+
+/* Línea y texto pequeño superior */
+.hero-eyebrow {
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.hero-eyebrow::before{content:'';width:34px;height:2px;background:var(--gold);display:inline-block;}
-.hero h1{
-  color:var(--cream);
-  font-size:clamp(2.6rem, 7vw, 5.4rem);
-  text-transform:uppercase;
-  max-width:900px;
+
+.hero-eyebrow::before {
+  content: "";
+  width: 34px;
+  height: 2px;
+  background: var(--gold);
+  display: inline-block;
 }
-.hero h1 em{font-style:normal;color:var(--gold);}
-.hero-sub{
-  color:var(--cream-dim);font-size:clamp(1rem,2vw,1.2rem);
-  max-width:520px;margin-top:20px;font-weight:500;
+
+/* Título principal */
+.hero h1 {
+  color: var(--cream);
+  font-size: clamp(2.6rem, 7vw, 5.4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  max-width: 900px;
+  margin: 0;
 }
-.hero-actions{display:flex;gap:16px;margin-top:36px;flex-wrap:wrap;}
-.btn{
-  padding:15px 28px;border-radius:2px;font-weight:800;
-  text-transform:uppercase;letter-spacing:0.06em;font-size:0.85rem;
-  display:inline-flex;align-items:center;gap:10px;
-  transition:transform .2s, box-shadow .2s;
-  border:2px solid transparent;
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold);
 }
-.btn:hover{transform:translateY(-2px);}
-.btn-primary{background:var(--gold);color:var(--ink);box-shadow:0 10px 30px rgba(242,183,5,0.25);}
-.btn-ghost{border-color:rgba(246,242,231,0.4);color:var(--cream);}
+
+/* Texto descriptivo */
+.hero-sub {
+  color: var(--cream-dim);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.6;
+  max-width: 520px;
+  margin-top: 20px;
+  font-weight: 500;
+}
+
+/* Botones */
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 15px 28px;
+  border-radius: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 0 10px 30px rgba(242, 183, 5, 0.25);
+}
+
+.btn-ghost {
+  border-color: rgba(246, 242, 231, 0.45);
+  color: var(--cream);
+}
+
+/* Ajuste para celular */
+@media (max-width: 700px) {
+  .hero {
+    min-height: 760px;
+  }
+
+  .hero-img {
+    object-position: center center;
+  }
+
+  .hero-content {
+    padding: 130px 22px 55px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 12vw, 4.2rem);
+    line-height: 0.98;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    gap: 12px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 15px 18px;
+  }
+}
 
 /* ============ SECTION SHARED ============ */
 section{padding:110px 0;}
