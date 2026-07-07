@@ -81,18 +81,23 @@ header.nav{
 }
 
 /* ============ HERO ============ */
-.hero{
-  position:relative;min-height:100svh;display:flex;align-items:flex-end;
-  background:var(--ink);
-  overflow:hidden;
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  background: var(--ink);
+  overflow: hidden;
 }
 .hero-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-position: center 22%;
+  object-fit: cover;
+  object-position: center 65%;
   filter: brightness(0.55) saturate(1.05);
+  z-index: 0;
 }
 
 .hero-scrim{
@@ -100,9 +105,13 @@ header.nav{
   background:linear-gradient(180deg, rgba(12,12,13,0.35) 0%, rgba(12,12,13,0.15) 35%, rgba(12,12,13,0.92) 92%),
              linear-gradient(90deg, rgba(12,12,13,0.55) 0%, transparent 45%);
 }
-.hero-content{
-  position:relative;z-index:2;padding:160px 24px 72px;
-  max-width:1120px;margin:0 auto;width:100%;
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 100px 24px 72px;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
 }
 .hero-eyebrow{
   color:var(--gold);font-weight:700;letter-spacing:0.25em;text-transform:uppercase;
