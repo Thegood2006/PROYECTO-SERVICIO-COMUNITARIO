@@ -255,6 +255,40 @@ header.nav{
     padding: 15px 18px;
   }
 }
+/* ============ Redes sociales ============ */
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.social-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.social-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #111111;
+  font-size: 20px;
+  transition: 0.3s ease;
+}
+
+.social-link:hover .social-icon {
+  transform: rotate(-8deg) scale(1.1);
+  background: #f4c542;
+}
+
+.social-link:hover .arrow {
+  transform: translate(4px, -4px);
+}
 
 /* ============ SECTION SHARED ============ */
 section{padding:110px 0;}
