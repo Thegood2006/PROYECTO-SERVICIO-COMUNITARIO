@@ -298,15 +298,21 @@ header.nav{
   width: 42px;
   height: 42px;
   flex: 0 0 42px;
-  display: grid;
-  place-items: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   border-radius: 50%;
   background: #ffffff;
   color: #111111;
+
   font-size: 20px;
+  line-height: 1;
+  text-align: center;
+
   transition: transform 0.3s ease, background 0.3s ease;
 }
-
 .name {
   font-size: 16px;
   font-weight: 700;
