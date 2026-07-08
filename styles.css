@@ -543,8 +543,8 @@ footer{
 
 .footer-top{
     display:grid;
-    grid-template-columns:1.6fr 1fr 1fr;
-    gap:60px;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap:40px 60px;
 
     max-width:1120px;
     margin:auto;
@@ -555,6 +555,7 @@ footer{
     display:flex;
     align-items:flex-start;
     gap:20px;
+    min-width:0;
 }
 
 .footer-brand img{
@@ -563,19 +564,26 @@ footer{
     object-fit:cover;
     border-radius:50%;
     border:3px solid #f2b705;
+    flex-shrink:0;
+}
+
+.footer-brand > div{
+    min-width:0;
 }
 
 .footer-brand h3{
-    font-size:2rem;
+    font-size:clamp(1.3rem, 2vw + 0.8rem, 2rem);
     margin-bottom:10px;
     color:#fff;
     line-height:1.1;
+    word-break:break-word;
 }
 
 .footer-brand p{
     color:#bdbdbd;
     line-height:1.8;
     max-width:280px;
+    overflow-wrap:break-word;
 }
 
 .footer-links h4{
@@ -590,6 +598,7 @@ footer{
     display:flex;
     flex-direction:column;
     gap:16px;
+    min-width:0;
 }
 
 .footer-links a{
@@ -599,6 +608,8 @@ footer{
 
     color:#ddd;
     text-decoration:none;
+    min-width:0;
+    overflow-wrap:break-word;
 
     transition:.3s;
 }
@@ -610,6 +621,7 @@ footer{
 
 .footer-links i{
     width:22px;
+    flex-shrink:0;
     color:#f2b705;
     text-align:center;
 }
@@ -621,7 +633,18 @@ footer{
     padding:18px;
 }
 
-@media(max-width:900px){
+/* Breakpoint intermedio: 2 columnas antes de llegar al stack final,
+   así la marca no choca contra "Contacto" en anchos medios */
+@media(max-width:1000px){
+.footer-top{
+    grid-template-columns:1fr 1fr;
+}
+.footer-brand{
+    grid-column:1 / -1;
+}
+}
+
+@media(max-width:600px){
 
 .footer-top{
     grid-template-columns:1fr;
