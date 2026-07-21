@@ -256,6 +256,70 @@ header.nav{
   }
 }
 /* ===========================
+   ticket-notes
+=========================== */
+/* Notas de horarios — arregla el bug de texto invisible + responsive */
+.ticket-notes {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.note-card {
+  background: #17140f;
+  color: #f6f2e7;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.note-card i {
+  color: #f5b301;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* Tickets: responsive explícito para celular / tablet / laptop */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+@media (max-width: 720px) {
+  .ticket-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ticket-heading {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticket-main, .ticket-stub {
+    padding: 20px !important;
+  }
+  .ticket-price {
+    font-size: 2.2rem;
+  }
+  .note-card {
+    padding: 16px 18px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Staff grid responsive */
+@media (max-width: 480px) {
+  .staff-grid > .quote-card {
+    padding: 18px !important;
+  }
+}
+/* ===========================
    TARJETAS REDES SOCIALES
 =========================== */
 
