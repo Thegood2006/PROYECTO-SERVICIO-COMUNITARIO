@@ -57,3 +57,28 @@ if (sliderTrack) {
 
   startAutoplay();
 }
+// Formulario de inscripción -> WhatsApp
+const inscForm = document.getElementById('inscForm');
+if (inscForm) {
+  inscForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const nombreNino = document.getElementById('nombreNino').value.trim();
+    const edadNino = document.getElementById('edadNino').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const nombrePadre = document.getElementById('nombrePadre').value.trim();
+    const telefonoPadre = document.getElementById('telefonoPadre').value.trim();
+    const mensaje = document.getElementById('mensaje').value.trim();
+
+    let texto = `¡Hola! Quiero inscribir a mi hijo/a en Academia J.A.\n\n`;
+    texto += `👦 Nombre del niño/a: ${nombreNino}\n`;
+    texto += `🎂 Edad: ${edadNino}\n`;
+    texto += `⚽ Categoría: ${categoria}\n`;
+    texto += `👤 Nombre del representante: ${nombrePadre}\n`;
+    texto += `📞 Teléfono: ${telefonoPadre}\n`;
+    if (mensaje) texto += `📝 Mensaje: ${mensaje}\n`;
+
+    const url = `https://wa.me/593982901508?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  });
+}
