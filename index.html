@@ -412,5 +412,40 @@
    aria-label="Escríbenos por WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
 </a>
+  </body>
+  <script>
+async function cargarContenidoSitio() {
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/Thegood2006/PROYECTO-SERVICIO-COMUNITARIO/main/contenido.json?t=' + Date.now());
+    if (!res.ok) return;
+    const c = await res.json();
+
+    if (c.hero) {
+      if (document.getElementById('txtHero1')) document.getElementById('txtHero1').firstChild.textContent = c.hero.linea1 + ' ';
+      if (document.getElementById('txtHero2')) document.getElementById('txtHero2').textContent = c.hero.linea2;
+      if (document.getElementById('txtHeroSub')) document.getElementById('txtHeroSub').textContent = c.hero.sub;
+    }
+    if (c.nosotros) {
+      ['txtNos1','txtNos2','txtNos3','txtNos4'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        const val = c.nosotros['p' + (i+1)];
+        if (el && val) el.textContent = val;
+      });
+    }
+
+    // Galería dinámica (reemplaza las fotos fijas del banner)
+    if (c.galeria && c.galeria.length && document.getElementById('sliderTrack')) {
+      const track = document.getElementById('sliderTrack');
+      track.innerHTML = c.galeria.map(url => `<div class="slide"><img src="${url}" alt="Academia J.A"></div>`).join('');
+    }
+  } catch(e) {
+    console.log('No se pudo cargar contenido.json', e);
+  }
+}
+cargarContenidoSitio();
+</script>
+</html>
+
 </body>
+  
 </html>
