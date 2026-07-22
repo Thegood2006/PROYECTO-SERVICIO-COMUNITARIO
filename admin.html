@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Academia J.A</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',system-ui,sans-serif; background:#f0ece0; color:#17140f; }
+  .wrap { max-width: 900px; margin:0 auto; padding:24px; }
+  h1 { font-size:1.5rem; margin-bottom:4px; }
+  .sub { opacity:0.7; margin-bottom:24px; }
+  .card { background:#fff; border-radius:16px; padding:24px; margin-bottom:24px; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+  label { display:block; font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.03em; color:#8a6d00; margin-bottom:6px; }
+  input, select, textarea { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:1rem; font-family:inherit; margin-bottom:18px; }
+  textarea { resize:vertical; }
+  .btn { display:inline-block; background:#f5b301; color:#17140f; font-weight:700; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; font-size:1rem; }
+  .btn:hover { background:#e0a400; }
+  .btn.danger { background:#e04b3f; color:#fff; }
+  .btn.ghost { background:#eee; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+  #status { padding:12px 16px; border-radius:10px; margin-bottom:18px; font-size:0.9rem; display:none; position:sticky; top:12px; z-index:10; }
+  #status.show { display:block; }
+  #status.ok { background:#d7f2d7; color:#1a5c1a; }
+  #status.err { background:#fbdada; color:#7a1a1a; }
+  #status.loading { background:#fff3cd; color:#7a5c00; }
+  .event-item { display:flex; gap:14px; padding:14px; border:1px solid #eee; border-radius:12px; margin-bottom:12px; align-items:center; }
+  .event-item img { width:70px; height:70px; object-fit:cover; border-radius:8px; flex-shrink:0; }
+  .event-item .info { flex:1; }
+  .event-item .tag { display:inline-block; background:#17140f; color:#f5b301; font-size:0.7rem; padding:2px 10px; border-radius:12px; margin-bottom:4px; text-transform:uppercase; }
+  .event-item h4 { margin:0 0 4px; font-size:1rem; }
+  .event-item .date { font-size:0.8rem; opacity:0.6; }
+  .login-box { max-width:420px; margin:80px auto; text-align:center; }
+  #mainPanel { display:none; }
+  .thumbs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .thumbs img { width:70px; height:70px; object-fit:cover; border-radius:8px; }
+  .tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .tab-btn { padding:10px 18px; border-radius:10px; border:none; background:#fff; cursor:pointer; font-weight:700; opacity:0.6; }
+  .tab-btn.active { background:#17140f; color:#f5b301; opacity:1; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .staff-block { border:1px solid #eee; border-radius:12px; padding:18px; margin-bottom:16px; }
+  .gal-item { position:relative; display:inline-block; margin:0 8px 8px 0; }
+  .gal-item img { width:100px; height:100px; object-fit:cover; border-radius:8px; }
+  .gal-item button { position:absolute; top:4px; right:4px; background:#e04b3f; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="login-box card" id="loginBox">
+    <h1>🔒 Admin Academia J.A</h1>
+    <p class="sub">Ingresa tu token de GitHub para continuar</p>
+    <label for="tokenInput">Token de GitHub (personal access token)</label>
+    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx">
+    <button class="btn" onclick="login()">Entrar</button>
+  </div>
+
+  <div id="mainPanel">
+    <h1>Admin — Academia J.A</h1>
+    <p class="sub">Maneja todo el contenido de la página: textos, equipo, fotos y noticias.</p>
+
+    <div id="status"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('general')">General</button>
+      <button class="tab-btn" onclick="showTab('staff')">Cuerpo técnico</button>
+      <button class="tab-btn" onclick="showTab('galeria')">Galería</button>
+      <button class="tab-btn" onclick="showTab('noticias')">Noticias</button>
+    </div>
+
+    <!-- TAB GENERAL -->
+    <div class="tab-panel active" id="tab-general">
+      <div class="card">
+        <h3 style="margin-top:0;">Inicio (Hero)</h3>
+        <label>Frase principal (línea 1)</label>
+        <input type="text" id="g_hero1" placeholder="Más que un equipo,">
+        <label>Frase principal (línea 2, cursiva)</label>
+        <input type="text" id="g_hero2" placeholder="una familia futbolera">
+        <label>Subtítulo</label>
+        <textarea id="g_heroSub" rows="2"></textarea>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Quiénes somos</h3>
+        <label>Párrafo 1</label>
+        <textarea id="g_nos1" rows="2"></textarea>
+        <label>Párrafo 2 (qué nos hace diferentes)</label>
+        <textarea id="g_nos2" rows="2"></textarea>
+        <label>Párrafo 3</label>
+        <textarea id="g_nos3" rows="2"></textarea>
+        <label>Párrafo 4 (número de chicos, torneos)</label>
+        <textarea id="g_nos4" rows="2"></textarea>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Horarios y precio</h3>
+        <label>Horario categoría 6-11 años</label>
+        <input type="text" id="g_hor1" placeholder="3:10 pm – 4:20 pm">
+        <label>Horario categoría 12-17 años</label>
+        <input type="text" id="g_hor2" placeholder="4:20 pm – 5:40 pm">
+        <label>Precio mensual ($)</label>
+        <input type="text" id="g_precio" placeholder="7">
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Contacto</h3>
+        <label>Teléfono</label>
+        <input type="text" id="g_tel" placeholder="0982901508">
+        <label>Correo</label>
+        <input type="text" id="g_correo" placeholder="christianandrango23.24@gmail.com">
+        <label>Dirección</label>
+        <input type="text" id="g_direccion" placeholder="UPC de Chiche, Puembo">
+      </div>
+
+      <button class="btn" id="saveGeneralBtn" onclick="guardarGeneral()">
+        <i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cambios generales
+      </button>
+    </div>
+
+    <!-- TAB STAFF -->
+    <div class="tab-panel" id="tab-staff">
+      <div class="card">
+        <h3 style="margin-top:0;">Entrenador principal</h3>
+        <label>Nombre</label>
+        <input type="text" id="s1_nombre">
+        <label>Rol</label>
+        <input type="text" id="s1_rol">
+        <label>Descripción / experiencia</label>
+        <textarea id="s1_texto" rows="3"></textarea>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Entrenador asistente</h3>
+        <label>Nombre</label>
+        <input type="text" id="s2_nombre">
+        <label>Rol</label>
+        <input type="text" id="s2_rol">
+        <label>Descripción / experiencia</label>
+        <textarea id="s2_texto" rows="3"></textarea>
+      </div>
+      <button class="btn" onclick="guardarStaff()">
+        <i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cuerpo técnico
+      </button>
+    </div>
+
+    <!-- TAB GALERIA -->
+    <div class="tab-panel" id="tab-galeria">
+      <div class="card">
+        <h3 style="margin-top:0;">Fotos del banner principal</h3>
+        <div id="galPreview"></div>
+        <label for="galInput">Agregar fotos nuevas</label>
+        <input type="file" id="galInput" accept="image/*" multiple>
+        <button class="btn" onclick="subirFotosGaleria()">
+          <i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Subir al banner
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB NOTICIAS -->
+    <div class="tab-panel" id="tab-noticias">
+      <div class="card">
+        <h3 style="margin-top:0;">Nuevo evento / noticia</h3>
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" placeholder="Ej: Amistoso vs Escuela San Rafael">
+        <label for="categoria">Categoría</label>
+        <select id="categoria">
+          <option value="Eventos">Eventos</option>
+          <option value="Copas">Copas</option>
+          <option value="Amistosos">Amistosos</option>
+          <option value="Clases abiertas">Clases abiertas</option>
+        </select>
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" rows="3"></textarea>
+        <label for="imagenes">Fotos</label>
+        <input type="file" id="imagenes" accept="image/*" multiple onchange="previewThumbs()">
+        <div class="thumbs" id="thumbsPreview"></div>
+        <button class="btn" id="publishBtn" onclick="publicarEvento()">
+          <i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Publicar evento
+        </button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Eventos publicados</h3>
+        <div id="eventsList">Cargando...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const OWNER = 'Thegood2006';
+const REPO = 'PROYECTO-SERVICIO-COMUNITARIO';
+const BRANCH = 'main';
+const JSON_PATH = 'eventos.json';
+const CONTENIDO_PATH = 'contenido.json';
+
+let TOKEN = localStorage.getItem('aja_gh_token') || '';
+
+function login() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t) return;
+  TOKEN = t;
+  localStorage.setItem('aja_gh_token', t);
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('mainPanel').style.display = 'block';
+  cargarEventos();
+  cargarContenido();
+}
+if (TOKEN) {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('mainPanel').style.display = 'block';
+  window.addEventListener('DOMContentLoaded', () => { cargarEventos(); cargarContenido(); });
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+}
+
+async function ghRequest(path, options = {}) {
+  return fetch(`https://api.github.com/repos/${OWNER}/${REPO}/${path}`, {
+    ...options,
+    headers: { 'Authorization': `token ${TOKEN}`, 'Accept': 'application/vnd.github+json', ...(options.headers||{}) }
+  });
+}
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function getJsonFile(path) {
+  const res = await ghRequest(`contents/${path}?ref=${BRANCH}`);
+  if (res.status === 404) return { sha: null, data: null };
+  if (!res.ok) throw new Error('No se pudo leer ' + path);
+  const json = await res.json();
+  const content = decodeURIComponent(escape(atob(json.content)));
+  return { sha: json.sha, data: JSON.parse(content) };
+}
+async function saveJsonFile(path, data, sha, message) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const body = { message, content, branch: BRANCH };
+  if (sha) body.sha = sha;
+  const res = await ghRequest(`contents/${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('No se pudo guardar ' + path);
+  return res.json();
+}
+async function subirArchivo(file, folder) {
+  const base64 = await fileToBase64(file);
+  const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `${folder}/${Date.now()}-${safeName}`;
+  const res = await ghRequest(`contents/${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: `Subir: ${safeName}`, content: base64, branch: BRANCH })
+  });
+  if (!res.ok) throw new Error('No se pudo subir: ' + safeName);
+  return `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${path}`;
+}
+
+const CONTENIDO_DEFAULT = {
+  hero: { linea1: "Más que un equipo,", linea2: "una familia futbolera", sub: "Formamos niños y niñas de 6 a 17 años en lo técnico, lo físico, lo táctico — y sobre todo, en valores." },
+  nosotros: { p1:"", p2:"", p3:"", p4:"" },
+  staff: [{nombre:"",rol:"",texto:""},{nombre:"",rol:"",texto:""}],
+  horarios: { cat1:"3:10 pm – 4:20 pm", cat2:"4:20 pm – 5:40 pm", precio:"7" },
+  contacto: { telefono:"", correo:"", direccion:"" },
+  galeria: []
+};
+
+let contenidoActual = JSON.parse(JSON.stringify(CONTENIDO_DEFAULT));
+let contenidoSha = null;
+
+async function cargarContenido() {
+  try {
+    const { sha, data } = await getJsonFile(CONTENIDO_PATH);
+    contenidoSha = sha;
+    contenidoActual = data || CONTENIDO_DEFAULT;
+    // Rellenar formulario
+    document.getElementById('g_hero1').value = contenidoActual.hero?.linea1 || '';
+    document.getElementById('g_hero2').value = contenidoActual.hero?.linea2 || '';
+    document.getElementById('g_heroSub').value = contenidoActual.hero?.sub || '';
+    document.getElementById('g_nos1').value = contenidoActual.nosotros?.p1 || '';
+    document.getElementById('g_nos2').value = contenidoActual.nosotros?.p2 || '';
+    document.getElementById('g_nos3').value = contenidoActual.nosotros?.p3 || '';
+    document.getElementById('g_nos4').value = contenidoActual.nosotros?.p4 || '';
+    document.getElementById('g_hor1').value = contenidoActual.horarios?.cat1 || '';
+    document.getElementById('g_hor2').value = contenidoActual.horarios?.cat2 || '';
+    document.getElementById('g_precio').value = contenidoActual.horarios?.precio || '';
+    document.getElementById('g_tel').value = contenidoActual.contacto?.telefono || '';
+    document.getElementById('g_correo').value = contenidoActual.contacto?.correo || '';
+    document.getElementById('g_direccion').value = contenidoActual.contacto?.direccion || '';
+    document.getElementById('s1_nombre').value = contenidoActual.staff?.[0]?.nombre || '';
+    document.getElementById('s1_rol').value = contenidoActual.staff?.[0]?.rol || '';
+    document.getElementById('s1_texto').value = contenidoActual.staff?.[0]?.texto || '';
+    document.getElementById('s2_nombre').value = contenidoActual.staff?.[1]?.nombre || '';
+    document.getElementById('s2_rol').value = contenidoActual.staff?.[1]?.rol || '';
+    document.getElementById('s2_texto').value = contenidoActual.staff?.[1]?.texto || '';
+    renderGaleria();
+  } catch(e) {
+    setStatus('No se pudo cargar contenido.json (puede que aún no exista, se creará al guardar).', 'loading');
+  }
+}
+
+async function guardarGeneral() {
+  contenidoActual.hero = { linea1: g_hero1.value, linea2: g_hero2.value, sub: g_heroSub.value };
+  contenidoActual.nosotros = { p1:g_nos1.value, p2:g_nos2.value, p3:g_nos3.value, p4:g_nos4.value };
+  contenidoActual.horarios = { cat1:g_hor1.value, cat2:g_hor2.value, precio:g_precio.value };
+  contenidoActual.contacto = { telefono:g_tel.value, correo:g_correo.value, direccion:g_direccion.value };
+  await guardarContenido('Actualizar info general');
+}
+
+async function guardarStaff() {
+  contenidoActual.staff = [
+    { nombre:s1_nombre.value, rol:s1_rol.value, texto:s1_texto.value },
+    { nombre:s2_nombre.value, rol:s2_rol.value, texto:s2_texto.value }
+  ];
+  await guardarContenido('Actualizar cuerpo técnico');
+}
+
+async function guardarContenido(msg) {
+  try {
+    setStatus('Guardando...', 'loading');
+    const result = await saveJsonFile(CONTENIDO_PATH, contenidoActual, contenidoSha, msg);
+    contenidoSha = result.content.sha;
+    setStatus('¡Guardado! Puede tardar uno o dos minutos en verse en la página.', 'ok');
+  } catch(e) {
+    setStatus('Error: ' + e.message, 'err');
+  }
+}
+
+function renderGaleria() {
+  const el = document.getElementById('galPreview');
+  el.innerHTML = '';
+  (contenidoActual.galeria || []).forEach((url, i) => {
+    const div = document.createElement('div');
+    div.className = 'gal-item';
+    div.innerHTML = `<img src="${url}"><button onclick="borrarFotoGaleria(${i})">×</button>`;
+    el.appendChild(div);
+  });
+}
+
+async function subirFotosGaleria() {
+  const files = document.getElementById('galInput').files;
+  if (!files.length) return;
+  try {
+    setStatus('Subiendo fotos...', 'loading');
+    if (!contenidoActual.galeria) contenidoActual.galeria = [];
+    for (const file of files) {
+      const url = await subirArchivo(file, 'images/galeria');
+      contenidoActual.galeria.push(url);
+    }
+    await guardarContenido('Agregar fotos a galería');
+    document.getElementById('galInput').value = '';
+    renderGaleria();
+  } catch(e) {
+    setStatus('Error: ' + e.message, 'err');
+  }
+}
+
+async function borrarFotoGaleria(index) {
+  if (!confirm('¿Quitar esta foto del banner?')) return;
+  contenidoActual.galeria.splice(index, 1);
+  await guardarContenido('Quitar foto de galería');
+  renderGaleria();
+}
+
+function previewThumbs() {
+  const files = document.getElementById('imagenes').files;
+  const container = document.getElementById('thumbsPreview');
+  container.innerHTML = '';
+  Array.from(files).forEach(file => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    container.appendChild(img);
+  });
+}
+
+async function publicarEvento() {
+  const titulo = document.getElementById('titulo').value.trim();
+  const categoria = document.getElementById('categoria').value;
+  const fecha = document.getElementById('fecha').value;
+  const descripcion = document.getElementById('descripcion').value.trim();
+  const files = document.getElementById('imagenes').files;
+  if (!titulo || !fecha) { setStatus('Falta el título o la fecha.', 'err'); return; }
+  const btn = document.getElementById('publishBtn');
+  btn.disabled = true;
+  try {
+    setStatus('Subiendo fotos...', 'loading');
+    const imagenes = [];
+    for (const file of files) imagenes.push(await subirArchivo(file, 'images/eventos'));
+    setStatus('Guardando evento...', 'loading');
+    const { sha, data } = await getJsonFile(JSON_PATH);
+    const lista = data || [];
+    lista.unshift({ id: Date.now(), titulo, categoria, fecha, descripcion, imagenes });
+    await saveJsonFile(JSON_PATH, lista, sha, `Agregar evento: ${titulo}`);
+    setStatus('¡Publicado!', 'ok');
+    titulo.value=''; document.getElementById('titulo').value='';
+    document.getElementById('descripcion').value='';
+    document.getElementById('imagenes').value='';
+    document.getElementById('thumbsPreview').innerHTML='';
+    cargarEventos();
+  } catch(e) {
+    setStatus('Error: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function cargarEventos() {
+  const listEl = document.getElementById('eventsList');
+  try {
+    const { data } = await getJsonFile(JSON_PATH);
+    const lista = data || [];
+    if (!lista.length) { listEl.innerHTML = '<p style="opacity:0.6;">Todavía no hay eventos publicados.</p>'; return; }
+    listEl.innerHTML = '';
+    lista.forEach(ev => {
+      const div = document.createElement('div');
+      div.className = 'event-item';
+      div.innerHTML = `
+        ${ev.imagenes && ev.imagenes[0] ? `<img src="${ev.imagenes[0]}">` : ''}
+        <div class="info"><div class="tag">${ev.categoria}</div><h4>${ev.titulo}</h4><div class="date">${ev.fecha}</div></div>
+        <button class="btn danger" onclick="borrarEvento(${ev.id})"><i class="fa-solid fa-trash"></i></button>`;
+      listEl.appendChild(div);
+    });
+  } catch(e) {
+    listEl.innerHTML = `<p style="color:#a00;">Error: ${e.message}</p>`;
+  }
+}
+
+async function borrarEvento(id) {
+  if (!confirm('¿Borrar este evento?')) return;
+  try {
+    const { sha, data } = await getJsonFile(JSON_PATH);
+    const nueva = (data||[]).filter(ev => ev.id !== id);
+    await saveJsonFile(JSON_PATH, nueva, sha, `Borrar evento ${id}`);
+    cargarEventos();
+  } catch(e) { setStatus('Error: ' + e.message, 'err'); }
+}
+</script>
+</body>
+</html>
