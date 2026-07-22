@@ -228,7 +228,55 @@
       <div class="note-card"><i class="fa-solid fa-bag-shopping"></i><span>Cada jugador debe traer guayos, agua y ropa deportiva cómoda.</span></div>
     </div>
 </section>
+<section class="form-section" id="inscripcion">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Inscripción</div>
+      <h2 style="color:var(--ink);">Reserva el cupo de tu hijo/a</h2>
+      <p>Llena estos datos y te escribimos directo por WhatsApp para confirmar la clase de prueba gratis.</p>
+    </div>
 
+    <form class="insc-form reveal" id"="inscForm">
+      <div class="form-row">
+        <label for="nombreNino">Nombre del niño/a</label>
+        <input type="text" id="nombreNino" required placeholder="Ej: Mateo Pérez">
+      </div>
+
+      <div class="form-row">
+        <label for="edadNino">Edad</label>
+        <input type="number" id="edadNino" min="6" max="17" required placeholder="Ej: 9">
+      </div>
+
+      <div class="form-row">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" required>
+          <option value="">Selecciona una opción</option>
+          <option value="6 a 11 años (3:10pm - 4:20pm)">6 a 11 años (3:10pm - 4:20pm)</option>
+          <option value="12 a 17 años (4:20pm - 5:40pm)">12 a 17 años (4:20pm - 5:40pm)</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="nombrePadre">Nombre del padre/madre/representante</label>
+        <input type="text" id="nombrePadre" required placeholder="Tu nombre">
+      </div>
+
+      <div class="form-row">
+        <label for="telefonoPadre">Tu número de teléfono</label>
+        <input type="tel" id="telefonoPadre" required placeholder="Ej: 0991234567">
+      </div>
+
+      <div class="form-row">
+        <label for="mensaje">Mensaje adicional (opcional)</label>
+        <textarea id="mensaje" rows="3" placeholder="Alguna pregunta o comentario..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">
+        <i class="fa-brands fa-whatsapp"></i>&nbsp; Enviar por WhatsApp
+      </button>
+    </form>
+  </div>
+</section>
 <section class="stats-section">
   <div class="wrap">
     <div class="stats-grid">
