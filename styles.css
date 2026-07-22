@@ -676,7 +676,31 @@ section{padding:110px 0;}
 .contact-row .v a:hover{border-color:var(--ink);}
 
 
+/*========================
+        MAPS
+=========================*/
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
 
+.map-card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  min-height: 320px;
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .map-card {
+    min-height: 260px;
+  }
+}
 /*========================
         FOOTER
 =========================*/
