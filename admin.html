@@ -18,7 +18,6 @@
   .btn { display:inline-block; background:#f5b301; color:#17140f; font-weight:700; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; font-size:1rem; }
   .btn:hover { background:#e0a400; }
   .btn.danger { background:#e04b3f; color:#fff; }
-  .btn.ghost { background:#eee; }
   .btn:disabled { opacity:0.5; cursor:not-allowed; }
   #status { padding:12px 16px; border-radius:10px; margin-bottom:18px; font-size:0.9rem; display:none; position:sticky; top:12px; z-index:10; }
   #status.show { display:block; }
@@ -40,10 +39,11 @@
   .tab-btn.active { background:#17140f; color:#f5b301; opacity:1; }
   .tab-panel { display:none; }
   .tab-panel.active { display:block; }
-  .staff-block { border:1px solid #eee; border-radius:12px; padding:18px; margin-bottom:16px; }
   .gal-item { position:relative; display:inline-block; margin:0 8px 8px 0; }
   .gal-item img { width:100px; height:100px; object-fit:cover; border-radius:8px; }
   .gal-item button { position:absolute; top:4px; right:4px; background:#e04b3f; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer; }
+  .userbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .userbar .who { font-size:0.85rem; opacity:0.6; }
 </style>
 </head>
 <body>
@@ -52,14 +52,18 @@
 
   <div class="login-box card" id="loginBox">
     <h1>🔒 Admin Academia J.A</h1>
-    <p class="sub">Ingresa tu token de GitHub para continuar</p>
-    <label for="tokenInput">Token de GitHub (personal access token)</label>
-    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx">
+    <p class="sub">Ingresa tu clave de acceso</p>
+    <label for="passInput">Clave</label>
+    <input type="password" id="passInput" placeholder="Escribe tu clave">
     <button class="btn" onclick="login()">Entrar</button>
+    <p id="loginError" style="color:#a00;font-size:0.85rem;display:none;margin-top:10px;">Clave incorrecta.</p>
   </div>
 
   <div id="mainPanel">
-    <h1>Admin — Academia J.A</h1>
+    <div class="userbar">
+      <h1 style="margin:0;">Admin — Academia J.A</h1>
+      <div class="who">👤 <span id="whoAmI"></span> · <a href="#" onclick="logout()">Salir</a></div>
+    </div>
     <p class="sub">Maneja todo el contenido de la página: textos, equipo, fotos y noticias.</p>
 
     <div id="status"></div>
@@ -71,99 +75,68 @@
       <button class="tab-btn" onclick="showTab('noticias')">Noticias</button>
     </div>
 
-    <!-- TAB GENERAL -->
     <div class="tab-panel active" id="tab-general">
       <div class="card">
         <h3 style="margin-top:0;">Inicio (Hero)</h3>
         <label>Frase principal (línea 1)</label>
-        <input type="text" id="g_hero1" placeholder="Más que un equipo,">
+        <input type="text" id="g_hero1">
         <label>Frase principal (línea 2, cursiva)</label>
-        <input type="text" id="g_hero2" placeholder="una familia futbolera">
+        <input type="text" id="g_hero2">
         <label>Subtítulo</label>
         <textarea id="g_heroSub" rows="2"></textarea>
       </div>
-
       <div class="card">
         <h3 style="margin-top:0;">Quiénes somos</h3>
-        <label>Párrafo 1</label>
-        <textarea id="g_nos1" rows="2"></textarea>
-        <label>Párrafo 2 (qué nos hace diferentes)</label>
-        <textarea id="g_nos2" rows="2"></textarea>
-        <label>Párrafo 3</label>
-        <textarea id="g_nos3" rows="2"></textarea>
-        <label>Párrafo 4 (número de chicos, torneos)</label>
-        <textarea id="g_nos4" rows="2"></textarea>
+        <label>Párrafo 1</label><textarea id="g_nos1" rows="2"></textarea>
+        <label>Párrafo 2 (qué nos hace diferentes)</label><textarea id="g_nos2" rows="2"></textarea>
+        <label>Párrafo 3</label><textarea id="g_nos3" rows="2"></textarea>
+        <label>Párrafo 4</label><textarea id="g_nos4" rows="2"></textarea>
       </div>
-
       <div class="card">
         <h3 style="margin-top:0;">Horarios y precio</h3>
-        <label>Horario categoría 6-11 años</label>
-        <input type="text" id="g_hor1" placeholder="3:10 pm – 4:20 pm">
-        <label>Horario categoría 12-17 años</label>
-        <input type="text" id="g_hor2" placeholder="4:20 pm – 5:40 pm">
-        <label>Precio mensual ($)</label>
-        <input type="text" id="g_precio" placeholder="7">
+        <label>Horario categoría 6-11 años</label><input type="text" id="g_hor1">
+        <label>Horario categoría 12-17 años</label><input type="text" id="g_hor2">
+        <label>Precio mensual ($)</label><input type="text" id="g_precio">
       </div>
-
       <div class="card">
         <h3 style="margin-top:0;">Contacto</h3>
-        <label>Teléfono</label>
-        <input type="text" id="g_tel" placeholder="0982901508">
-        <label>Correo</label>
-        <input type="text" id="g_correo" placeholder="christianandrango23.24@gmail.com">
-        <label>Dirección</label>
-        <input type="text" id="g_direccion" placeholder="UPC de Chiche, Puembo">
+        <label>Teléfono</label><input type="text" id="g_tel">
+        <label>Correo</label><input type="text" id="g_correo">
+        <label>Dirección</label><input type="text" id="g_direccion">
       </div>
-
-      <button class="btn" id="saveGeneralBtn" onclick="guardarGeneral()">
-        <i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cambios generales
-      </button>
+      <button class="btn" onclick="guardarGeneral()"><i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cambios generales</button>
     </div>
 
-    <!-- TAB STAFF -->
     <div class="tab-panel" id="tab-staff">
       <div class="card">
         <h3 style="margin-top:0;">Entrenador principal</h3>
-        <label>Nombre</label>
-        <input type="text" id="s1_nombre">
-        <label>Rol</label>
-        <input type="text" id="s1_rol">
-        <label>Descripción / experiencia</label>
-        <textarea id="s1_texto" rows="3"></textarea>
+        <label>Nombre</label><input type="text" id="s1_nombre">
+        <label>Rol</label><input type="text" id="s1_rol">
+        <label>Descripción</label><textarea id="s1_texto" rows="3"></textarea>
       </div>
       <div class="card">
         <h3 style="margin-top:0;">Entrenador asistente</h3>
-        <label>Nombre</label>
-        <input type="text" id="s2_nombre">
-        <label>Rol</label>
-        <input type="text" id="s2_rol">
-        <label>Descripción / experiencia</label>
-        <textarea id="s2_texto" rows="3"></textarea>
+        <label>Nombre</label><input type="text" id="s2_nombre">
+        <label>Rol</label><input type="text" id="s2_rol">
+        <label>Descripción</label><textarea id="s2_texto" rows="3"></textarea>
       </div>
-      <button class="btn" onclick="guardarStaff()">
-        <i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cuerpo técnico
-      </button>
+      <button class="btn" onclick="guardarStaff()"><i class="fa-solid fa-floppy-disk"></i>&nbsp; Guardar cuerpo técnico</button>
     </div>
 
-    <!-- TAB GALERIA -->
     <div class="tab-panel" id="tab-galeria">
       <div class="card">
         <h3 style="margin-top:0;">Fotos del banner principal</h3>
         <div id="galPreview"></div>
         <label for="galInput">Agregar fotos nuevas</label>
         <input type="file" id="galInput" accept="image/*" multiple>
-        <button class="btn" onclick="subirFotosGaleria()">
-          <i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Subir al banner
-        </button>
+        <button class="btn" onclick="subirFotosGaleria()"><i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Subir al banner</button>
       </div>
     </div>
 
-    <!-- TAB NOTICIAS -->
     <div class="tab-panel" id="tab-noticias">
       <div class="card">
         <h3 style="margin-top:0;">Nuevo evento / noticia</h3>
-        <label for="titulo">Título</label>
-        <input type="text" id="titulo" placeholder="Ej: Amistoso vs Escuela San Rafael">
+        <label for="titulo">Título</label><input type="text" id="titulo">
         <label for="categoria">Categoría</label>
         <select id="categoria">
           <option value="Eventos">Eventos</option>
@@ -171,18 +144,13 @@
           <option value="Amistosos">Amistosos</option>
           <option value="Clases abiertas">Clases abiertas</option>
         </select>
-        <label for="fecha">Fecha</label>
-        <input type="date" id="fecha">
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" rows="3"></textarea>
+        <label for="fecha">Fecha</label><input type="date" id="fecha">
+        <label for="descripcion">Descripción</label><textarea id="descripcion" rows="3"></textarea>
         <label for="imagenes">Fotos</label>
         <input type="file" id="imagenes" accept="image/*" multiple onchange="previewThumbs()">
         <div class="thumbs" id="thumbsPreview"></div>
-        <button class="btn" id="publishBtn" onclick="publicarEvento()">
-          <i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Publicar evento
-        </button>
+        <button class="btn" id="publishBtn" onclick="publicarEvento()"><i class="fa-solid fa-cloud-arrow-up"></i>&nbsp; Publicar evento</button>
       </div>
-
       <div class="card">
         <h3 style="margin-top:0;">Eventos publicados</h3>
         <div id="eventsList">Cargando...</div>
@@ -193,6 +161,27 @@
 </div>
 
 <script>
+// ============================================
+// CONFIGURACIÓN — tú editas solo esta parte
+// ============================================
+
+// Tu token de GitHub (fine-grained, con permiso Contents: Read and write
+// SOLO en el repo PROYECTO-SERVICIO-COMUNITARIO). Lo pegas UNA vez aquí.
+const GITHUB_TOKEN_OCULTO = "PEGA_AQUI_TU_TOKEN_github_pat_...";
+
+// Perfiles: agrega tantas claves como personas necesiten entrar.
+// Todas usan el mismo token de arriba por detrás, pero cada una
+// puede tener su propio nombre para identificar quién hizo qué.
+const PERFILES = [
+  { clave: "academiaja2026", nombre: "Christian" },
+  { clave: "asistente2026",  nombre: "Josué" }
+  // Agrega más así: { clave: "otraClave", nombre: "Otro nombre" }
+];
+
+// ============================================
+// No es necesario tocar nada debajo de esta línea
+// ============================================
+
 const OWNER = 'Thegood2006';
 const REPO = 'PROYECTO-SERVICIO-COMUNITARIO';
 const BRANCH = 'main';
@@ -200,21 +189,38 @@ const JSON_PATH = 'eventos.json';
 const CONTENIDO_PATH = 'contenido.json';
 
 let TOKEN = localStorage.getItem('aja_gh_token') || '';
+let NOMBRE_ACTUAL = localStorage.getItem('aja_nombre') || '';
 
 function login() {
-  const t = document.getElementById('tokenInput').value.trim();
-  if (!t) return;
-  TOKEN = t;
-  localStorage.setItem('aja_gh_token', t);
+  const clave = document.getElementById('passInput').value.trim();
+  const perfil = PERFILES.find(p => p.clave === clave);
+  if (!perfil) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  TOKEN = GITHUB_TOKEN_OCULTO;
+  NOMBRE_ACTUAL = perfil.nombre;
+  localStorage.setItem('aja_gh_token', TOKEN);
+  localStorage.setItem('aja_nombre', NOMBRE_ACTUAL);
+  entrarPanel();
+}
+
+function logout() {
+  localStorage.removeItem('aja_gh_token');
+  localStorage.removeItem('aja_nombre');
+  location.reload();
+}
+
+function entrarPanel() {
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('mainPanel').style.display = 'block';
+  document.getElementById('whoAmI').textContent = NOMBRE_ACTUAL || 'Usuario';
   cargarEventos();
   cargarContenido();
 }
+
 if (TOKEN) {
-  document.getElementById('loginBox').style.display = 'none';
-  document.getElementById('mainPanel').style.display = 'block';
-  window.addEventListener('DOMContentLoaded', () => { cargarEventos(); cargarContenido(); });
+  window.addEventListener('DOMContentLoaded', entrarPanel);
 }
 
 function showTab(name) {
@@ -247,6 +253,7 @@ function fileToBase64(file) {
 async function getJsonFile(path) {
   const res = await ghRequest(`contents/${path}?ref=${BRANCH}`);
   if (res.status === 404) return { sha: null, data: null };
+  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
   if (!res.ok) throw new Error('No se pudo leer ' + path);
   const json = await res.json();
   const content = decodeURIComponent(escape(atob(json.content)));
@@ -254,38 +261,42 @@ async function getJsonFile(path) {
 }
 async function saveJsonFile(path, data, sha, message) {
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const body = { message, content, branch: BRANCH };
+  const body = { message: `${message} (${NOMBRE_ACTUAL})`, content, branch: BRANCH };
   if (sha) body.sha = sha;
   const res = await ghRequest(`contents/${path}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
   if (!res.ok) throw new Error('No se pudo guardar ' + path);
   return res.json();
 }
 async function subirArchivo(file, folder) {
+  if (file.size > 1000000) {
+    throw new Error(`"${file.name}" pesa más de 1MB. Comprímela en tinypng.com antes de subirla.`);
+  }
   const base64 = await fileToBase64(file);
   const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
   const path = `${folder}/${Date.now()}-${safeName}`;
   const res = await ghRequest(`contents/${path}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: `Subir: ${safeName}`, content: base64, branch: BRANCH })
+    body: JSON.stringify({ message: `Subir: ${safeName} (${NOMBRE_ACTUAL})`, content: base64, branch: BRANCH })
   });
+  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
   if (!res.ok) throw new Error('No se pudo subir: ' + safeName);
   return `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${path}`;
 }
 
 const CONTENIDO_DEFAULT = {
-  hero: { linea1: "Más que un equipo,", linea2: "una familia futbolera", sub: "Formamos niños y niñas de 6 a 17 años en lo técnico, lo físico, lo táctico — y sobre todo, en valores." },
+  hero: { linea1: "Más que un equipo,", linea2: "una familia futbolera", sub: "" },
   nosotros: { p1:"", p2:"", p3:"", p4:"" },
   staff: [{nombre:"",rol:"",texto:""},{nombre:"",rol:"",texto:""}],
-  horarios: { cat1:"3:10 pm – 4:20 pm", cat2:"4:20 pm – 5:40 pm", precio:"7" },
+  horarios: { cat1:"", cat2:"", precio:"" },
   contacto: { telefono:"", correo:"", direccion:"" },
   galeria: []
 };
-
 let contenidoActual = JSON.parse(JSON.stringify(CONTENIDO_DEFAULT));
 let contenidoSha = null;
 
@@ -294,29 +305,28 @@ async function cargarContenido() {
     const { sha, data } = await getJsonFile(CONTENIDO_PATH);
     contenidoSha = sha;
     contenidoActual = data || CONTENIDO_DEFAULT;
-    // Rellenar formulario
-    document.getElementById('g_hero1').value = contenidoActual.hero?.linea1 || '';
-    document.getElementById('g_hero2').value = contenidoActual.hero?.linea2 || '';
-    document.getElementById('g_heroSub').value = contenidoActual.hero?.sub || '';
-    document.getElementById('g_nos1').value = contenidoActual.nosotros?.p1 || '';
-    document.getElementById('g_nos2').value = contenidoActual.nosotros?.p2 || '';
-    document.getElementById('g_nos3').value = contenidoActual.nosotros?.p3 || '';
-    document.getElementById('g_nos4').value = contenidoActual.nosotros?.p4 || '';
-    document.getElementById('g_hor1').value = contenidoActual.horarios?.cat1 || '';
-    document.getElementById('g_hor2').value = contenidoActual.horarios?.cat2 || '';
-    document.getElementById('g_precio').value = contenidoActual.horarios?.precio || '';
-    document.getElementById('g_tel').value = contenidoActual.contacto?.telefono || '';
-    document.getElementById('g_correo').value = contenidoActual.contacto?.correo || '';
-    document.getElementById('g_direccion').value = contenidoActual.contacto?.direccion || '';
-    document.getElementById('s1_nombre').value = contenidoActual.staff?.[0]?.nombre || '';
-    document.getElementById('s1_rol').value = contenidoActual.staff?.[0]?.rol || '';
-    document.getElementById('s1_texto').value = contenidoActual.staff?.[0]?.texto || '';
-    document.getElementById('s2_nombre').value = contenidoActual.staff?.[1]?.nombre || '';
-    document.getElementById('s2_rol').value = contenidoActual.staff?.[1]?.rol || '';
-    document.getElementById('s2_texto').value = contenidoActual.staff?.[1]?.texto || '';
+    g_hero1.value = contenidoActual.hero?.linea1 || '';
+    g_hero2.value = contenidoActual.hero?.linea2 || '';
+    g_heroSub.value = contenidoActual.hero?.sub || '';
+    g_nos1.value = contenidoActual.nosotros?.p1 || '';
+    g_nos2.value = contenidoActual.nosotros?.p2 || '';
+    g_nos3.value = contenidoActual.nosotros?.p3 || '';
+    g_nos4.value = contenidoActual.nosotros?.p4 || '';
+    g_hor1.value = contenidoActual.horarios?.cat1 || '';
+    g_hor2.value = contenidoActual.horarios?.cat2 || '';
+    g_precio.value = contenidoActual.horarios?.precio || '';
+    g_tel.value = contenidoActual.contacto?.telefono || '';
+    g_correo.value = contenidoActual.contacto?.correo || '';
+    g_direccion.value = contenidoActual.contacto?.direccion || '';
+    s1_nombre.value = contenidoActual.staff?.[0]?.nombre || '';
+    s1_rol.value = contenidoActual.staff?.[0]?.rol || '';
+    s1_texto.value = contenidoActual.staff?.[0]?.texto || '';
+    s2_nombre.value = contenidoActual.staff?.[1]?.nombre || '';
+    s2_rol.value = contenidoActual.staff?.[1]?.rol || '';
+    s2_texto.value = contenidoActual.staff?.[1]?.texto || '';
     renderGaleria();
   } catch(e) {
-    setStatus('No se pudo cargar contenido.json (puede que aún no exista, se creará al guardar).', 'loading');
+    setStatus(e.message, 'err');
   }
 }
 
@@ -327,7 +337,6 @@ async function guardarGeneral() {
   contenidoActual.contacto = { telefono:g_tel.value, correo:g_correo.value, direccion:g_direccion.value };
   await guardarContenido('Actualizar info general');
 }
-
 async function guardarStaff() {
   contenidoActual.staff = [
     { nombre:s1_nombre.value, rol:s1_rol.value, texto:s1_texto.value },
@@ -335,7 +344,6 @@ async function guardarStaff() {
   ];
   await guardarContenido('Actualizar cuerpo técnico');
 }
-
 async function guardarContenido(msg) {
   try {
     setStatus('Guardando...', 'loading');
@@ -343,7 +351,7 @@ async function guardarContenido(msg) {
     contenidoSha = result.content.sha;
     setStatus('¡Guardado! Puede tardar uno o dos minutos en verse en la página.', 'ok');
   } catch(e) {
-    setStatus('Error: ' + e.message, 'err');
+    setStatus(e.message, 'err');
   }
 }
 
@@ -357,7 +365,6 @@ function renderGaleria() {
     el.appendChild(div);
   });
 }
-
 async function subirFotosGaleria() {
   const files = document.getElementById('galInput').files;
   if (!files.length) return;
@@ -372,10 +379,9 @@ async function subirFotosGaleria() {
     document.getElementById('galInput').value = '';
     renderGaleria();
   } catch(e) {
-    setStatus('Error: ' + e.message, 'err');
+    setStatus(e.message, 'err');
   }
 }
-
 async function borrarFotoGaleria(index) {
   if (!confirm('¿Quitar esta foto del banner?')) return;
   contenidoActual.galeria.splice(index, 1);
@@ -395,12 +401,12 @@ function previewThumbs() {
 }
 
 async function publicarEvento() {
-  const titulo = document.getElementById('titulo').value.trim();
+  const tituloVal = document.getElementById('titulo').value.trim();
   const categoria = document.getElementById('categoria').value;
   const fecha = document.getElementById('fecha').value;
   const descripcion = document.getElementById('descripcion').value.trim();
   const files = document.getElementById('imagenes').files;
-  if (!titulo || !fecha) { setStatus('Falta el título o la fecha.', 'err'); return; }
+  if (!tituloVal || !fecha) { setStatus('Falta el título o la fecha.', 'err'); return; }
   const btn = document.getElementById('publishBtn');
   btn.disabled = true;
   try {
@@ -410,16 +416,16 @@ async function publicarEvento() {
     setStatus('Guardando evento...', 'loading');
     const { sha, data } = await getJsonFile(JSON_PATH);
     const lista = data || [];
-    lista.unshift({ id: Date.now(), titulo, categoria, fecha, descripcion, imagenes });
-    await saveJsonFile(JSON_PATH, lista, sha, `Agregar evento: ${titulo}`);
+    lista.unshift({ id: Date.now(), titulo: tituloVal, categoria, fecha, descripcion, imagenes });
+    await saveJsonFile(JSON_PATH, lista, sha, `Agregar evento: ${tituloVal}`);
     setStatus('¡Publicado!', 'ok');
-    titulo.value=''; document.getElementById('titulo').value='';
+    document.getElementById('titulo').value='';
     document.getElementById('descripcion').value='';
     document.getElementById('imagenes').value='';
     document.getElementById('thumbsPreview').innerHTML='';
     cargarEventos();
   } catch(e) {
-    setStatus('Error: ' + e.message, 'err');
+    setStatus(e.message, 'err');
   } finally {
     btn.disabled = false;
   }
@@ -442,7 +448,7 @@ async function cargarEventos() {
       listEl.appendChild(div);
     });
   } catch(e) {
-    listEl.innerHTML = `<p style="color:#a00;">Error: ${e.message}</p>`;
+    listEl.innerHTML = `<p style="color:#a00;">${e.message}</p>`;
   }
 }
 
@@ -453,7 +459,7 @@ async function borrarEvento(id) {
     const nueva = (data||[]).filter(ev => ev.id !== id);
     await saveJsonFile(JSON_PATH, nueva, sha, `Borrar evento ${id}`);
     cargarEventos();
-  } catch(e) { setStatus('Error: ' + e.message, 'err'); }
+  } catch(e) { setStatus(e.message, 'err'); }
 }
 </script>
 </body>
