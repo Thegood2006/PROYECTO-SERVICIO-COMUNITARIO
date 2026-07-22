@@ -338,6 +338,62 @@ header.nav{
   .slider-btn { width: 36px; height: 36px; font-size: 20px; }
 }
 /* ===========================
+   FORMUALARIO
+=========================== */
+.form-section { padding: 80px 0; }
+
+.insc-form {
+  max-width: 620px;
+  margin: 40px auto 0;
+  background: #17140f;
+  border-radius: 20px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row label {
+  color: #f5b301;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  background: #f6f2e7;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #17140f;
+}
+
+.form-row textarea {
+  resize: vertical;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  outline: 2px solid #f5b301;
+}
+
+@media (max-width: 480px) {
+  .insc-form { padding: 24px; }
+}
+/* ===========================
    ticket-notes
 =========================== */
 /* Notas de horarios — arregla el bug de texto invisible + responsive */
