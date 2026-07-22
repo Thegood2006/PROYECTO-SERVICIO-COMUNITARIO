@@ -170,12 +170,12 @@
 const GITHUB_TOKEN_OCULTO = "PEGA_AQUI_TU_TOKEN_github_pat_...";
 
 // Perfiles: agrega tantas claves como personas necesiten entrar.
-// Todas usan el mismo token de arriba por detrás, pero cada una
-// puede tener su propio nombre para identificar quién hizo qué.
+// rol: "admin" ve TODO (General, Staff, Galería, Noticias).
+// rol: "editor" ve SOLO Noticias (anuncios, partidos, eventos, copas).
 const PERFILES = [
-  { clave: "academiaja2026", nombre: "Christian" },
-  { clave: "asistente2026",  nombre: "Josué" }
-  // Agrega más así: { clave: "otraClave", nombre: "Otro nombre" }
+  { clave: "jona2026",       nombre: "Jona",   rol: "admin"  },
+  { clave: "academiaja2026", nombre: "Cliente", rol: "editor" }
+  // Agrega más así: { clave: "otraClave", nombre: "Nombre", rol: "editor" }
 ];
 
 // ============================================
@@ -190,6 +190,7 @@ const CONTENIDO_PATH = 'contenido.json';
 
 let TOKEN = localStorage.getItem('aja_gh_token') || '';
 let NOMBRE_ACTUAL = localStorage.getItem('aja_nombre') || '';
+let ROL_ACTUAL = localStorage.getItem('aja_rol') || '';
 
 function login() {
   const clave = document.getElementById('passInput').value.trim();
@@ -200,14 +201,17 @@ function login() {
   }
   TOKEN = GITHUB_TOKEN_OCULTO;
   NOMBRE_ACTUAL = perfil.nombre;
+  ROL_ACTUAL = perfil.rol;
   localStorage.setItem('aja_gh_token', TOKEN);
   localStorage.setItem('aja_nombre', NOMBRE_ACTUAL);
+  localStorage.setItem('aja_rol', ROL_ACTUAL);
   entrarPanel();
 }
 
 function logout() {
   localStorage.removeItem('aja_gh_token');
   localStorage.removeItem('aja_nombre');
+  localStorage.removeItem('aja_rol');
   location.reload();
 }
 
@@ -215,8 +219,18 @@ function entrarPanel() {
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('mainPanel').style.display = 'block';
   document.getElementById('whoAmI').textContent = NOMBRE_ACTUAL || 'Usuario';
+
+  if (ROL_ACTUAL !== 'admin') {
+    // Editor: solo ve la pestaña de Noticias, y sin selector de pestañas
+    document.querySelector('.tabs').style.display = 'none';
+    document.getElementById('tab-general').classList.remove('active');
+    document.getElementById('tab-staff').classList.remove('active');
+    document.getElementById('tab-galeria').classList.remove('active');
+    document.getElementById('tab-noticias').classList.add('active');
+  }
+
   cargarEventos();
-  cargarContenido();
+  if (ROL_ACTUAL === 'admin') cargarContenido();
 }
 
 if (TOKEN) {
@@ -224,6 +238,7 @@ if (TOKEN) {
 }
 
 function showTab(name) {
+  if (ROL_ACTUAL !== 'admin') return; // los editores no pueden cambiar de pestaña
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
