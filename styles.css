@@ -319,8 +319,6 @@ header.nav{
 
 .slide {
   min-width: 100%;
-  /* Relación de aspecto fija: la caja siempre tiene el mismo tamaño,
-     sin importar si la foto es horizontal o vertical */
   aspect-ratio: 16 / 9;
   overflow: hidden;
 }
@@ -328,8 +326,8 @@ header.nav{
 .slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;      /* recorta sin deformar, llenando el espacio */
-  object-position: center; /* centra la parte más importante de la foto */
+  object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -373,8 +371,6 @@ header.nav{
 }
 .slider-dots .dot-btn.active { background: #fff; }
 
-/* Responsive: en celular la caja es un poco más alta para que
-   las fotos verticales se vean mejor */
 @media (max-width: 640px) {
   .slide { aspect-ratio: 4 / 5; }
   .slider-btn { width: 36px; height: 36px; font-size: 20px; }
@@ -438,7 +434,6 @@ header.nav{
 /* ===========================
    ticket-notes
 =========================== */
-/* Notas de horarios — arregla el bug de texto invisible + responsive */
 .ticket-notes {
   margin-top: 28px;
   display: grid;
@@ -464,7 +459,6 @@ header.nav{
   flex-shrink: 0;
 }
 
-/* Tickets: responsive explícito para celular / tablet / laptop */
 .tickets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -493,7 +487,6 @@ header.nav{
   }
 }
 
-/* Staff grid responsive */
 @media (max-width: 480px) {
   .staff-grid > .quote-card {
     padding: 18px !important;
@@ -901,8 +894,6 @@ footer{
     padding:18px;
 }
 
-/* Breakpoint intermedio: 2 columnas antes de llegar al stack final,
-   así la marca no choca contra "Contacto" en anchos medios */
 @media(max-width:1000px){
 .footer-top{
     grid-template-columns:1fr 1fr;
@@ -947,7 +938,6 @@ footer{
     transform:translateY(0);
 }
 
-/* Si el usuario prefiere menos movimiento, mostramos todo directo */
 @media (prefers-reduced-motion: reduce){
     .reveal{
         opacity:1;
