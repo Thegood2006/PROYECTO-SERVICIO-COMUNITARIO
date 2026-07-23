@@ -515,6 +515,99 @@ header.nav{
   }
 }
 /* ===========================
+   BLOG / NOTICIAS
+   (esta sección existía en el HTML pero no tenía ningún estilo:
+   por eso se veía como texto plano sin diseño, "vacía")
+=========================== */
+.blog-section{background:var(--cream);}
+
+.blog-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:28px;
+  margin-top:36px;
+}
+
+.blog-card{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 14px 34px rgba(0,0,0,0.10);
+  transition:transform .25s ease, box-shadow .25s ease;
+  display:flex;
+  flex-direction:column;
+}
+.blog-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 44px rgba(0,0,0,0.16);
+}
+
+.blog-img{
+  aspect-ratio:16/10;
+  overflow:hidden;
+  background:var(--ink);
+}
+.blog-img img{width:100%;height:100%;object-fit:cover;}
+
+.blog-body{
+  padding:22px 22px 26px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+}
+
+.blog-tag{
+  align-self:flex-start;
+  background:var(--ink);
+  color:var(--gold);
+  font-size:0.68rem;
+  font-weight:800;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:5px 12px;
+  border-radius:999px;
+}
+
+.blog-date{
+  font-size:0.8rem;
+  color:var(--gold-deep);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.blog-body h3{
+  font-size:1.25rem;
+  text-transform:uppercase;
+  margin-top:2px;
+}
+
+.blog-desc{
+  color:#4a4a48;
+  font-size:0.95rem;
+  line-height:1.55;
+  margin-top:4px;
+}
+
+/* Estado vacío: cuando todavía no hay noticias publicadas,
+   en vez de una línea de texto perdida, se ve como una tarjeta a propósito */
+.blog-empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:56px 24px;
+  color:#8a8578;
+  font-size:1rem;
+  background:rgba(0,0,0,0.02);
+  border:1px dashed rgba(0,0,0,0.14);
+  border-radius:16px;
+}
+
+@media(max-width:480px){
+  .blog-body{padding:18px;}
+}
+
+/* ===========================
    TARJETAS REDES SOCIALES
 =========================== */
 
@@ -647,12 +740,28 @@ section{padding:110px 0;}
 }
 
 /* ============ ABOUT ============ */
-.about{background:var(--cream);}
+.about{
+  background:var(--cream);
+  position:relative;
+}
+/* Textura sutil (puntos) para que la sección no se vea plana cuando es solo texto */
+.about::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:radial-gradient(rgba(12,12,13,0.05) 1.5px, transparent 1.5px);
+  background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 18%, rgba(0,0,0,0.9) 82%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 18%, rgba(0,0,0,0.9) 82%, transparent 100%);
+  pointer-events:none;
+}
+.about .wrap{position:relative;z-index:1;}
 .about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:64px;align-items:start;}
 .about-body p{font-size:1.05rem;color:#3a3a38;margin-bottom:18px;max-width:520px;}
 .quote-card{
   background:var(--ink);color:var(--cream);padding:44px 38px;border-radius:4px;
   position:relative;box-shadow:var(--shadow);
+  border-top:3px solid var(--gold);
 }
 .quote-card::before{
   content:'"';position:absolute;top:8px;left:24px;font-family:var(--display);
@@ -982,7 +1091,8 @@ footer{
     .btn:hover,
     .social-link:hover,
     .social-link:hover .social-icon,
-    .footer-links a:hover{
+    .footer-links a:hover,
+    .blog-card:hover{
         transform:none;
     }
 }
