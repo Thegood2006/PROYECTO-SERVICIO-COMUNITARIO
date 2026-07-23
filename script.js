@@ -18,21 +18,31 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-// Agregar a script.js
-const sliderTrack = document.getElementById('sliderTrack');
-const sliderDots = document.getElementById('sliderDots');
-const prevBtn = document.getElementById('sliderPrev');
-const nextBtn = document.getElementById('sliderNext');
 
-if (sliderTrack) {
+// Carrusel de galería — re-ejecutable, para cuando se recarga con fotos del admin
+let sliderAutoplay = null;
+
+function initGallerySlider() {
+  const sliderTrack = document.getElementById('sliderTrack');
+  const sliderDots = document.getElementById('sliderDots');
+  const prevBtn = document.getElementById('sliderPrev');
+  const nextBtn = document.getElementById('sliderNext');
+
+  if (!sliderTrack) return;
+
+  // Limpia todo lo anterior (puntos viejos y autoplay viejo)
+  clearInterval(sliderAutoplay);
+  sliderDots.innerHTML = '';
+
   const slides = sliderTrack.querySelectorAll('.slide');
+  if (!slides.length) return;
+
   let current = 0;
-  let autoplay;
 
   slides.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.className = 'dot-btn' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => goTo(i));
+    dot.addEventListener('click', () => { goTo(i); resetAutoplay(); });
     sliderDots.appendChild(dot);
   });
 
@@ -45,18 +55,22 @@ if (sliderTrack) {
   }
 
   function startAutoplay() {
-    autoplay = setInterval(() => goTo(current + 1), 4000);
+    sliderAutoplay = setInterval(() => goTo(current + 1), 4000);
   }
   function resetAutoplay() {
-    clearInterval(autoplay);
+    clearInterval(sliderAutoplay);
     startAutoplay();
   }
 
-  nextBtn.addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });
-  prevBtn.addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
+  nextBtn.onclick = () => { goTo(current + 1); resetAutoplay(); };
+  prevBtn.onclick = () => { goTo(current - 1); resetAutoplay(); };
 
   startAutoplay();
 }
+
+initGallerySlider();
+window.initGallerySlider = initGallerySlider; // para volver a llamarla desde index.html cuando lleguen las fotos reales
+
 // Formulario de inscripción -> WhatsApp
 const inscForm = document.getElementById('inscForm');
 if (inscForm) {
