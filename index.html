@@ -20,6 +20,7 @@
       <a href="#nosotros">Nosotros</a>
       <a href="#staff">Cuerpo técnico</a>
       <a href="#formacion">Formación</a>
+      <a href="#noticias">Noticias</a>
       <a href="#horarios">Horarios</a>
       <a href="#contacto">Contacto</a>
       <a href="#inscripcion">Inscripción</a>
@@ -66,6 +67,20 @@
     </div>
   </div>
 </section>
+
+<section class="blog-section" id="noticias">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Blog</div>
+      <h2>Noticias y eventos</h2>
+      <p>Copas, amistosos, clases abiertas y todo lo que va pasando en la familia futbolera.</p>
+    </div>
+    <div class="blog-grid reveal" id="blogGrid">
+      <p class="blog-empty">Cargando noticias...</p>
+    </div>
+  </div>
+</section>
+
 <section class="about" id="nosotros">
   <div class="wrap">
     <div class="about-grid">
@@ -443,9 +458,43 @@ async function cargarContenidoSitio() {
   }
 }
 cargarContenidoSitio();
-</script>
-</html>
 
-</body>
-  
+// ============ BLOG / NOTICIAS ============
+async function cargarNoticiasSitio() {
+  const grid = document.getElementById('blogGrid');
+  if (!grid) return;
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/Thegood2006/PROYECTO-SERVICIO-COMUNITARIO/main/eventos.json?t=' + Date.now());
+    if (!res.ok) { grid.innerHTML = '<p class="blog-empty">Todavía no hay noticias publicadas.</p>'; return; }
+    const lista = await res.json();
+    if (!lista || !lista.length) { grid.innerHTML = '<p class="blog-empty">Todavía no hay noticias publicadas.</p>'; return; }
+
+    const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    grid.innerHTML = lista.map(ev => {
+      const partes = (ev.fecha || '').split('-');
+      let fechaTexto = ev.fecha || '';
+      if (partes.length === 3) {
+        const dia = parseInt(partes[2], 10);
+        const mes = meses[parseInt(partes[1], 10) - 1] || '';
+        fechaTexto = `${dia} ${mes} ${partes[0]}`;
+      }
+      const foto = (ev.imagenes && ev.imagenes[0]) ? ev.imagenes[0] : 'logo.jpeg';
+      return `
+        <div class="blog-card">
+          <div class="blog-img"><img src="${foto}" alt="${ev.titulo || ''}" loading="lazy"></div>
+          <div class="blog-body">
+            <span class="blog-tag">${ev.categoria || 'Eventos'}</span>
+            <div class="blog-date">${fechaTexto}</div>
+            <h3>${ev.titulo || ''}</h3>
+            <p class="blog-desc">${ev.descripcion || ''}</p>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    grid.innerHTML = '<p class="blog-empty">No se pudieron cargar las noticias.</p>';
+    console.log('No se pudo cargar eventos.json', e);
+  }
+}
+cargarNoticiasSitio();
+</script>
 </html>
