@@ -165,9 +165,9 @@
 // CONFIGURACIÓN — tú editas solo esta parte
 // ============================================
 
-// Tu token de GitHub (fine-grained, con permiso Contents: Read and write
-// SOLO en el repo PROYECTO-SERVICIO-COMUNITARIO). Lo pegas UNA vez aquí.
-const GITHUB_TOKEN_OCULTO = "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";
+// URL de tu servidor backend en Render (lo actualizas cuando lo despliegues).
+// Este servidor es el que guarda el token de GitHub de forma segura.
+const BACKEND_URL = "https://academiaja-server.onrender.com";
 
 // Perfiles: agrega tantas claves como personas necesiten entrar.
 // rol: "admin" ve TODO (General, Staff, Galería, Noticias).
@@ -182,15 +182,13 @@ const PERFILES = [
 // No es necesario tocar nada debajo de esta línea
 // ============================================
 
-const OWNER = 'Thegood2006';
-const REPO = 'PROYECTO-SERVICIO-COMUNITARIO';
-const BRANCH = 'main';
 const JSON_PATH = 'eventos.json';
 const CONTENIDO_PATH = 'contenido.json';
 
-let TOKEN = localStorage.getItem('aja_gh_token') || '';
 let NOMBRE_ACTUAL = localStorage.getItem('aja_nombre') || '';
 let ROL_ACTUAL = localStorage.getItem('aja_rol') || '';
+// TOKEN ya no existe del lado del cliente — vive solo en el servidor backend.
+let TOKEN = ROL_ACTUAL ? 'ok' : '';
 
 function login() {
   const clave = document.getElementById('passInput').value.trim();
@@ -199,17 +197,15 @@ function login() {
     document.getElementById('loginError').style.display = 'block';
     return;
   }
-  TOKEN = GITHUB_TOKEN_OCULTO;
+  TOKEN = 'ok';
   NOMBRE_ACTUAL = perfil.nombre;
   ROL_ACTUAL = perfil.rol;
-  localStorage.setItem('aja_gh_token', TOKEN);
   localStorage.setItem('aja_nombre', NOMBRE_ACTUAL);
   localStorage.setItem('aja_rol', ROL_ACTUAL);
   entrarPanel();
 }
 
 function logout() {
-  localStorage.removeItem('aja_gh_token');
   localStorage.removeItem('aja_nombre');
   localStorage.removeItem('aja_rol');
   location.reload();
@@ -251,12 +247,6 @@ function setStatus(msg, type) {
   el.className = 'show ' + type;
 }
 
-async function ghRequest(path, options = {}) {
-  return fetch(`https://api.github.com/repos/${OWNER}/${REPO}/${path}`, {
-    ...options,
-    headers: { 'Authorization': `token ${TOKEN}`, 'Accept': 'application/vnd.github+json', ...(options.headers||{}) }
-  });
-}
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -266,42 +256,35 @@ function fileToBase64(file) {
   });
 }
 async function getJsonFile(path) {
-  const res = await ghRequest(`contents/${path}?ref=${BRANCH}`);
-  if (res.status === 404) return { sha: null, data: null };
-  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
-  if (!res.ok) throw new Error('No se pudo leer ' + path);
-  const json = await res.json();
-  const content = decodeURIComponent(escape(atob(json.content)));
-  return { sha: json.sha, data: JSON.parse(content) };
+  const res = await fetch(`${BACKEND_URL}/api/file/${path}`);
+  if (res.status === 401 || res.status === 403) throw new Error('El servidor no tiene permisos con GitHub. Avisa al administrador del sitio.');
+  if (!res.ok) throw new Error('No se pudo leer ' + path + ' (¿el servidor está despierto?)');
+  return res.json(); // { sha, data }
 }
 async function saveJsonFile(path, data, sha, message) {
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const body = { message: `${message} (${NOMBRE_ACTUAL})`, content, branch: BRANCH };
-  if (sha) body.sha = sha;
-  const res = await ghRequest(`contents/${path}`, {
+  const res = await fetch(`${BACKEND_URL}/api/file/${path}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ data, sha, message, autor: NOMBRE_ACTUAL })
   });
-  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
+  if (res.status === 401 || res.status === 403) throw new Error('El servidor no tiene permisos con GitHub. Avisa al administrador del sitio.');
   if (!res.ok) throw new Error('No se pudo guardar ' + path);
-  return res.json();
+  return res.json(); // { sha }
 }
 async function subirArchivo(file, folder) {
   if (file.size > 1000000) {
     throw new Error(`"${file.name}" pesa más de 1MB. Comprímela en tinypng.com antes de subirla.`);
   }
   const base64 = await fileToBase64(file);
-  const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-  const path = `${folder}/${Date.now()}-${safeName}`;
-  const res = await ghRequest(`contents/${path}`, {
-    method: 'PUT',
+  const res = await fetch(`${BACKEND_URL}/api/upload`, {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: `Subir: ${safeName} (${NOMBRE_ACTUAL})`, content: base64, branch: BRANCH })
+    body: JSON.stringify({ folder, filename: file.name, base64, autor: NOMBRE_ACTUAL })
   });
-  if (res.status === 401 || res.status === 403) throw new Error('El token no tiene permisos o expiró. Avisa al administrador del sitio.');
-  if (!res.ok) throw new Error('No se pudo subir: ' + safeName);
-  return `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${path}`;
+  if (res.status === 401 || res.status === 403) throw new Error('El servidor no tiene permisos con GitHub. Avisa al administrador del sitio.');
+  if (!res.ok) throw new Error('No se pudo subir: ' + file.name);
+  const result = await res.json();
+  return result.url;
 }
 
 const CONTENIDO_DEFAULT = {
@@ -363,7 +346,7 @@ async function guardarContenido(msg) {
   try {
     setStatus('Guardando...', 'loading');
     const result = await saveJsonFile(CONTENIDO_PATH, contenidoActual, contenidoSha, msg);
-    contenidoSha = result.content.sha;
+    contenidoSha = result.sha;
     setStatus('¡Guardado! Puede tardar uno o dos minutos en verse en la página.', 'ok');
   } catch(e) {
     setStatus(e.message, 'err');
