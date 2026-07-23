@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "linea1": "Más que un equipo,",
+    "linea2": "una familia futbolera",
+    "sub": ""
+  },
+  "nosotros": {
+    "p1": "",
+    "p2": "",
+    "p3": "",
+    "p4": ""
+  },
+  "staff": [
+    {
+      "nombre": "",
+      "rol": "",
+      "texto": ""
+    },
+    {
+      "nombre": "",
+      "rol": "",
+      "texto": ""
+    }
+  ],
+  "horarios": {
+    "cat1": "",
+    "cat2": "",
+    "precio": ""
+  },
+  "contacto": {
+    "telefono": "",
+    "correo": "",
+    "direccion": ""
+  },
+  "galeria": [
+    "https://raw.githubusercontent.com/Thegood2006/PROYECTO-SERVICIO-COMUNITARIO/main/images/galeria/1784767409914-WhatsApp_Image_2026-07-14_at_2.51.55_PM__1_.jpeg"
+  ]
+}
