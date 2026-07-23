@@ -452,6 +452,7 @@ async function cargarContenidoSitio() {
     if (c.galeria && c.galeria.length && document.getElementById('sliderTrack')) {
       const track = document.getElementById('sliderTrack');
       track.innerHTML = c.galeria.map(url => `<div class="slide"><img src="${url}" alt="Academia J.A"></div>`).join('');
+      if (window.initGallerySlider) window.initGallerySlider();
     }
   } catch(e) {
     console.log('No se pudo cargar contenido.json', e);
